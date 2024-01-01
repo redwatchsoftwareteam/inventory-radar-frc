@@ -17,28 +17,47 @@ function nameSubmit() {
   addDoc(collection(db, "dcaf"), {
     name: name,
   });
+  setName("")
 }
 
   async function refresh() {
     const qDcaf = query(collection(db, "dcaf"))
     const querySnapshot = await getDocs(qDcaf)
+    let updatedPartsList = [...partsList];
+
+    // querySnapshot.forEach(doc => {
+    //   const docData2 = doc.data()
+    //   console.log(docData2.name)
+    // })
 
     querySnapshot.forEach(doc => {
       const docData = doc.data();
       var dup = false;
 
-      for (var i = 0; i < partsList.length; i++) {
-        if (partsList[i] === docData.name) {
+
+      for (var i = 0; i < updatedPartsList.length; i++) {
+        if (updatedPartsList[i].name === docData.name) {
           dup = true;
         }
       }
 
-      if (!dup) {
-        partsList.push(docData.name)
+      if (!dup && docData.name !== undefined ) {
+        var newPartList = {
+          name: docData.name,
+          id: uuidv4(),
+        }
+        
+
+        updatedPartsList.push(newPartList);
+
+        console.log(newPartList)
       }
 
+
     })
-    console.log(partsList)
+
+    setPartsList(updatedPartsList);
+
 
 }
   
@@ -49,9 +68,9 @@ function nameSubmit() {
       <button onClick={refresh}>Refresh</button>
 
       {partsList.map(part => 
-    <li key={part.id}>
-      <p>{part.name}</p>
-    </li>)}
+      <li key={part.id}>
+        {part.name}
+      </li>)}
 
 
       
