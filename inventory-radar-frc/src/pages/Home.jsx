@@ -6,7 +6,7 @@ const home = () => {
       <h1>Hello</h1>
       <div>
         <div>
-          <button>Button 1</button>
+          <button><a href={"/page1"}>Button 1</a></button>
           <button>Button 2</button>
         </div>
         <div>
