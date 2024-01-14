@@ -146,30 +146,43 @@ function nameSubmit() {
 }
   
   return (
-  <div className='pl-[40px] container  max-w-full  '>
-    <div className='flex flex-row  gap-[100px] pb-[50px] justify-center max-w-full'>
-      <input className='' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
-      <input placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
+  <div className='container absolute max-w-full font-Poppins '>
 
-      <button onClick={nameSubmit}>Submit</button>
-      <button onClick={refresh}>Refresh</button>
+    <div className='flex flex-col  gap-[20px] sm:gap-[25px] pb-[50px] justify-center items-center '>
+      
+      <div className='flex sm:flex-row gap-[20px]'>
+        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
+        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
+      </div>
+
+      <div className='flex sm:flex-row gap-[20px]'>
+        <button onClick={nameSubmit}>Submit</button>
+        <button onClick={refresh}>Refresh</button>
+      </div>
+      
     </div>
       
-      <div className='flex flex-col gap-[100px]'>
+      <div className='flex flex-col gap-[100px] pl-[10px]'>
         {partsList.map(part => 
         <div className="flex flex-col gap-[15px]" key={part.id}>
         
-          <div>
+          <div className='flex flex-row gap-[10px] font-semibold'>
             Name: {part.name}
+            <button className='w-[75px] h-[30px] flex items-center justify-center text-red-700' onClick={() => removeItem(part.name)}>Remove</button>
           </div>
 
           <div>
-            Quantity: {part.quan}
+          </div>
+
+
+          
+          <div className='flex flex-row gap-[10px]'>
+            # of {part.name}: {part.quan}
+            <input className='w-[100px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new #'  onChange={(e) => setNewQuan(e.target.value)}></input>
+            <button className='w-[175px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeQuan(part.id)}>Enter</button>
+
           </div>
           
-          <input placeholder='Update Quantity'  onChange={(e) => setNewQuan(e.target.value)}></input>
-          <button onClick={() => changeQuan(part.id)}>Change Quan</button>
-          <button onClick={() => removeItem(part.name)}>Remove</button>
         </div>)}
       </div>
 
