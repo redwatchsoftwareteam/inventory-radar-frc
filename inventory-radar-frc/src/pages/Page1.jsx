@@ -11,6 +11,9 @@ const Page1 = () => {
 const [name, setName] = useState("")
 const [quan, setQuan] = useState(0)
 const [newQuan, setNewQuan] = useState(0)
+const [location, setLocation] = useState("")
+const [newLoc, setNewLoc] = useState("")
+
 
 const storedData = window.localStorage.getItem('dcafData');
 const parsedDataBeta = storedData ? JSON.parse(storedData) : {};
@@ -42,7 +45,7 @@ useEffect(() => {
 
 
   window.localStorage.setItem('dcafData', JSON.stringify(dataToStore));
-}, [partsList /* ... other state variables ... */]);
+}, [partsList, newQuan, newLoc /* ... other state variables ... */]);
 
 
 useEffect(() => {
@@ -61,29 +64,67 @@ async function removeItem(partName) {
   });
 
   await deleteDoc(doc(db, "dcaf", docId));
+
+  // for (var i = 0; i < partsList.length; i++) {
+  //   console.log("updatedPartsList")
+
+  //   if (partsList[i].partName == partName){
+  //     let updatedPartsList = partsList;
+  //     updatedPartsList.splice(i,1);
+  //     setPartsList(updatedPartsList);
+  //   }
+  // }
+
  }
 
  async function changeQuan(id) {
-  console.log(newQuan)
+  console.log("New Quantity:", newQuan);
   await updateDoc(doc(db, 'dcaf', id), {
-    quan: newQuan.toString()
+    quan: newQuan.toString(),
   })
 
   for (var i = 0; i < partsList.length; i++) {
+    console.log("Checking part:", partsList[i]);
+
     if (partsList[i].id == id){
       partsList[i].quan = newQuan
     }
   }
 
-  setQuan("")
+  console.log("Updated partsList:", partsList);
+
+  setNewQuan(0)
+ }
+
+ async function changeLoc(id) {
+  // console.log(newLoc)
+  await updateDoc(doc(db, 'dcaf', id), {
+    location: newLoc.toString(),
+  })
+
+  for (var i = 0; i < partsList.length; i++) {
+    if (partsList[i].id == id){
+      partsList[i].location = newLoc
+    }
+  }
+
+  setNewLoc("")
  }
 
 
 function nameSubmit() {
-  addDoc(collection(db, "dcaf"), {
+  const prom = addDoc(collection(db, "dcaf"), {
     name: name,
-    quan: quan
+    quan: quan,
+    location: location
   });
+  var updatedPartsList = partsList 
+  // !! ID IS NOT ADDED TO LOCAL ARRAY !!
+  updatedPartsList.push({
+    name: name,
+    quan: quan,
+    location: location
+  })
   setName("")
   setQuan(0)
 }
@@ -105,10 +146,6 @@ function nameSubmit() {
     const querySnapshot = await getDocs(qDcaf)
     let updatedPartsList = [partsList];
 
-    // querySnapshot.forEach(doc => {
-    //   const docData2 = doc.data()
-    //   console.log(docData2.name)
-    // })
 
     querySnapshot.forEach(doc => {
       const docData = doc.data();
@@ -126,6 +163,7 @@ function nameSubmit() {
         var newPartList = {
           name: docData.name,
           quan: docData.quan,
+          location: docData.location,
           id: doc.id,
         }
         
@@ -152,7 +190,9 @@ function nameSubmit() {
       
       <div className='flex sm:flex-row gap-[20px]'>
         <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
-        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
+        <input className='w-[50px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
+        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Location'  value={location} onChange={(e) => setLocation(e.target.value)}></input>
+
       </div>
 
       <div className='flex sm:flex-row gap-[20px]'>
@@ -162,25 +202,25 @@ function nameSubmit() {
       
     </div>
       
-      <div className='flex flex-col gap-[100px] pl-[10px]'>
+      <div className='flex flex-col gap-[100px] pl-[10px] pb-[200px]'>
         {partsList.map(part => 
         <div className="flex flex-col gap-[15px]" key={part.id}>
         
-          <div className='flex flex-row gap-[10px] font-semibold'>
+          <div className='flex flex-row gap-[2px] font-semibold'>
             Name: {part.name}
             <button className='w-[75px] h-[30px] flex items-center justify-center text-red-700' onClick={() => removeItem(part.name)}>Remove</button>
           </div>
 
-          <div>
-          </div>
-
-
-          
           <div className='flex flex-row gap-[10px]'>
             # of {part.name}: {part.quan}
             <input className='w-[100px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new #'  onChange={(e) => setNewQuan(e.target.value)}></input>
             <button className='w-[175px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeQuan(part.id)}>Enter</button>
+          </div>
 
+          <div className='flex flex-row gap-[10px]'>
+            Location : {part.location}
+            <input className='w-[300px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new location'  onChange={(e) => setNewLoc(e.target.value)}></input>
+            <button className='w-[175px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeLoc(part.id)}>Enter1</button>
           </div>
           
         </div>)}
