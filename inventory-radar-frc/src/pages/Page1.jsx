@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { db } from '../firebase'
-import { addDoc, collection, deleteDoc, doc, documentId, getDocs, onSnapshot, query, setDoc, where} from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, documentId, getDocs, onSnapshot, query, setDoc, updateDoc, where} from 'firebase/firestore';
 import { uuidv4 } from '@firebase/util';
 
 
@@ -10,7 +10,40 @@ const Page1 = () => {
 
 const [name, setName] = useState("")
 const [quan, setQuan] = useState(0)
-const [partsList, setPartsList] = useState([])
+const [newQuan, setNewQuan] = useState(0)
+
+const storedData = window.localStorage.getItem('dcafData');
+const parsedDataBeta = storedData ? JSON.parse(storedData) : {};
+const initPartsList = parsedDataBeta.partsList || [];
+const [partsList, setPartsList] = useState(initPartsList)
+
+// Load data from local storage when the component mounts
+useEffect(() => {
+    
+  const storedData = window.localStorage.getItem('dcafData');
+  
+  if (storedData) {
+    const parsedDataBeta = JSON.parse(storedData);
+    console.log(parsedDataBeta)
+    // Set the state with the data retrieved from local storage
+    setPartsList(parsedDataBeta.partsList || '')
+    
+    
+  }
+}, []);
+
+// Save data to local storage whenever the relevant state changes
+useEffect(() => {
+  const dataToStore = {
+    partsList
+    
+    // ... other state variables ...
+  };
+
+
+  window.localStorage.setItem('dcafData', JSON.stringify(dataToStore));
+}, [partsList /* ... other state variables ... */]);
+
 
 useEffect(() => {
   console.log("test")
@@ -28,6 +61,21 @@ async function removeItem(partName) {
   });
 
   await deleteDoc(doc(db, "dcaf", docId));
+ }
+
+ async function changeQuan(id) {
+  console.log(newQuan)
+  await updateDoc(doc(db, 'dcaf', id), {
+    quan: newQuan.toString()
+  })
+
+  for (var i = 0; i < partsList.length; i++) {
+    if (partsList[i].id == id){
+      partsList[i].quan = newQuan
+    }
+  }
+
+  setQuan("")
  }
 
 
@@ -64,6 +112,7 @@ function nameSubmit() {
 
     querySnapshot.forEach(doc => {
       const docData = doc.data();
+      console.log(doc.id)
       var dup = false;
 
 
@@ -77,34 +126,38 @@ function nameSubmit() {
         var newPartList = {
           name: docData.name,
           quan: docData.quan,
-          id: uuidv4(),
+          id: doc.id,
         }
         
 
         updatedPartsList.push(newPartList);
 
-        console.log(newPartList)
+        console.log(updatedPartsList)
       }
 
 
     })
 
+    updatedPartsList.shift()
+    console.log(updatedPartsList)
     setPartsList(updatedPartsList);
 
 
 }
   
   return (
-    <div>
-      <input placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
+  <div className='pl-[40px] container  max-w-full  '>
+    <div className='flex flex-row  gap-[100px] pb-[50px] justify-center max-w-full'>
+      <input className='' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
       <input placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
 
       <button onClick={nameSubmit}>Submit</button>
       <button onClick={refresh}>Refresh</button>
-
-      <div className='flex flex-row'>
+    </div>
+      
+      <div className='flex flex-col gap-[100px]'>
         {partsList.map(part => 
-        <div className="flex flex-row" key={part.id}>
+        <div className="flex flex-col gap-[15px]" key={part.id}>
         
           <div>
             Name: {part.name}
@@ -113,7 +166,9 @@ function nameSubmit() {
           <div>
             Quantity: {part.quan}
           </div>
-
+          
+          <input placeholder='Update Quantity'  onChange={(e) => setNewQuan(e.target.value)}></input>
+          <button onClick={() => changeQuan(part.id)}>Change Quan</button>
           <button onClick={() => removeItem(part.name)}>Remove</button>
         </div>)}
       </div>
