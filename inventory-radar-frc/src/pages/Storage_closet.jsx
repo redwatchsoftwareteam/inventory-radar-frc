@@ -127,7 +127,6 @@ async function removeItem(partName) {
 
 
 function nameSubmit() {
-  let id;
   addDoc(collection(db, "storage-room"), {
     name: name,
     quan: quan,
@@ -135,17 +134,23 @@ function nameSubmit() {
   }).then(docRef => {
 
     console.log("Document written with ID: ", docRef.id);
-    id = docRef.id;
-    setNewId(id)
+    let id = docRef.id;
+    
+    sepFunc(id)
 
 })
 console.log(newId)
-var updatedPartsList = partsList 
+
+
+}
+
+async function sepFunc(docId) {
+  var updatedPartsList = partsList 
     updatedPartsList.push({
       name: name,
       quan: quan,
       location: location,
-      id: newId
+      id: docId
     })
 
     setPartsList(updatedPartsList)
@@ -153,7 +158,9 @@ var updatedPartsList = partsList
   
   setName("")
   setQuan(0)
+  setNewId("")
 }
+
 
   async function refresh() {
 
