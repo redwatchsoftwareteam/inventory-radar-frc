@@ -126,8 +126,7 @@ async function removeItem(partName) {
  }
 
 
-function nameSubmit() {
-  let id;
+ function nameSubmit() {
   addDoc(collection(db, "old-closet"), {
     name: name,
     quan: quan,
@@ -135,17 +134,23 @@ function nameSubmit() {
   }).then(docRef => {
 
     console.log("Document written with ID: ", docRef.id);
-    id = docRef.id;
-    setNewId(id)
+    let id = docRef.id;
+    
+    sepFunc(id)
 
 })
 console.log(newId)
-var updatedPartsList = partsList 
+
+
+}
+
+async function sepFunc(docId) {
+  var updatedPartsList = partsList 
     updatedPartsList.push({
       name: name,
       quan: quan,
       location: location,
-      id: newId
+      id: docId
     })
 
     setPartsList(updatedPartsList)
@@ -153,6 +158,7 @@ var updatedPartsList = partsList
   
   setName("")
   setQuan(0)
+  setNewId("")
 }
 
   async function refresh() {
@@ -196,14 +202,14 @@ var updatedPartsList = partsList
 }
   
   return (
-  <div className='container absolute max-w-full font-Poppins '>
+    <div className='container  w-screen font-Poppins '>
 
-    <div className='flex flex-col  gap-[20px] sm:gap-[25px] pb-[50px] justify-center items-center '>
+    <div className='flex flex-col  gap-[20px] sm:gap-[25px] py-[50px] justify-center items-center '>
       
-      <div className='flex sm:flex-row gap-[20px]'>
-        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
-        <input className='w-[50px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
-        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Location'  value={location} onChange={(e) => setLocation(e.target.value)}></input>
+      <div className='flex sm:flex-row flex-col gap-[20px]'>
+        <input className='sm:w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
+        <input className='sm:w-[50px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
+        <input className='sm:w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Location'  value={location} onChange={(e) => setLocation(e.target.value)}></input>
 
       </div>
 
@@ -214,25 +220,25 @@ var updatedPartsList = partsList
       
     </div>
       
-      <div className='flex flex-col gap-[100px] pl-[10px] pb-[200px]'>
+      <div className='flex flex-col gap-[100px]  pb-[200px] pl-[10px]'>
         {partsList.map(part => 
         <div className="flex flex-col gap-[15px]" key={part.id}>
         
           <div className='flex flex-row gap-[2px] font-semibold'>
             Name: {part.name}
-            <button className='w-[75px] h-[30px] flex items-center justify-center text-red-700 hover:text-black hover:bg-red-700  hover:border-black ' onClick={() => removeItem(part.name)}>Remove</button>
+            {/* <button className='w-[75px] h-[30px] flex items-center justify-center text-red-700 hover:text-black hover:bg-red-700  hover:border-black ' onClick={() => removeItem(part.name)}>Remove</button> */}
           </div>
 
-          <div className='flex flex-row gap-[10px]'>
+          <div className='flex sm:flex-row flex-col gap-[10px]'>
             # of {part.name}: {part.quan}
             <input id={part.id} className='w-[100px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new #'  onChange={(e) => setNewQuan(e.target.value)}></input>
             <button className='w-[100px] h-[30px] flex items-center justify-center text-green-500  hover:text-black hover:bg-green-500  hover:border-black ' onClick={() => changeQuan(part.id)}>Enter</button>
           </div>
 
-          <div className='flex flex-row gap-[10px]'>
+          <div className='flex sm:flex-row flex-col gap-[10px]'>
             Location : {part.location}
-            <input id="newLoc" className='w-[300px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new location'  onChange={(e) => setNewLoc(e.target.value)}></input>
-            <button className='w-[100px] h-[30px] flex items-center justify-center text-green-500 hover:text-black hover:bg-green-500  hover:border-black ' onClick={() => changeLoc(part.id)}>Enter</button>
+            <input id="newLoc" className='sm:w-[300px] w-[200px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new location'  onChange={(e) => setNewLoc(e.target.value)}></input>
+            <button className='w-[100px]  h-[30px] flex items-center justify-center text-green-500 hover:text-black hover:bg-green-500  hover:border-black ' onClick={() => changeLoc(part.id)}>Enter</button>
           </div>
           
         </div>)}
