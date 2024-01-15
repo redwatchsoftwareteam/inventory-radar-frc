@@ -6,7 +6,7 @@ import { uuidv4 } from '@firebase/util';
 
 
 
-const Page1 = () => {
+const Old_closet = () => {
 
 const [name, setName] = useState("")
 const [quan, setQuan] = useState(0)
@@ -17,7 +17,7 @@ const [location, setLocation] = useState("")
 const [newLoc, setNewLoc] = useState("")
 
 
-const storedData = window.localStorage.getItem('rahulData');
+const storedData = window.localStorage.getItem('oldClosetData');
 const parsedDataBeta = storedData ? JSON.parse(storedData) : {};
 const initPartsList = parsedDataBeta.partsList || [];
 const [partsList, setPartsList] = useState(initPartsList)
@@ -25,7 +25,7 @@ const [partsList, setPartsList] = useState(initPartsList)
 // Load data from local storage when the component mounts
 useEffect(() => {
     
-  const storedData = window.localStorage.getItem('rahulData');
+  const storedData = window.localStorage.getItem('oldClosetData');
   
   if (storedData) {
     const parsedDataBeta = JSON.parse(storedData);
@@ -46,7 +46,7 @@ useEffect(() => {
   };
 
 
-  window.localStorage.setItem('rahulData', JSON.stringify(dataToStore));
+  window.localStorage.setItem('oldClosetData', JSON.stringify(dataToStore));
 }, [partsList, newQuan, newLoc /* ... other state variables ... */]);
 
 
@@ -56,7 +56,7 @@ useEffect(() => {
 
 async function removeItem(partName) {
   // console.log(partName)
-  const q = query(collection(db, "rahul-closet"), where("name", "==", partName));
+  const q = query(collection(db, "old-closet"), where("name", "==", partName));
   const querySnapshot = await getDocs(q);
   var docId;
   querySnapshot.forEach((doc) => {
@@ -65,7 +65,7 @@ async function removeItem(partName) {
     
   });
 
-  await deleteDoc(doc(db, "rahul-closet", docId));
+  await deleteDoc(doc(db, "old-closet", docId));
 
   // for (var i = 0; i < partsList.length; i++) {
   //   console.log("updatedPartsList")
@@ -85,7 +85,7 @@ async function removeItem(partName) {
   txtBox.value = "";
 
   console.log("Id:", id);
-  await updateDoc(doc(db, 'rahul-closet', id), {
+  await updateDoc(doc(db, 'old-closet', id), {
     quan: newQuan.toString(),
   })
 
@@ -108,7 +108,7 @@ async function removeItem(partName) {
   txtBox.value = "";
 
   console.log("Id:", id);
-  await updateDoc(doc(db, 'rahul-closet', id), {
+  await updateDoc(doc(db, 'old-closet', id), {
     location: newLoc.toString(),
   })
 
@@ -128,7 +128,7 @@ async function removeItem(partName) {
 
 function nameSubmit() {
   let id;
-  addDoc(collection(db, "rahul-closet"), {
+  addDoc(collection(db, "old-closet"), {
     name: name,
     quan: quan,
     location: location
@@ -157,7 +157,7 @@ var updatedPartsList = partsList
 
   async function refresh() {
 
-    const qDcaf = query(collection(db, "rahul-closet"))
+    const qDcaf = query(collection(db, "old-closet"))
 
     onSnapshot(qDcaf, {includeMetadataChanges:true}, (snapshot) =>
       snapshot.docChanges().forEach((change) => {
@@ -196,14 +196,14 @@ var updatedPartsList = partsList
 }
   
   return (
-  <div className='container  w-screen font-Poppins '>
+  <div className='container absolute max-w-full font-Poppins '>
 
-    <div className='flex flex-col  gap-[20px] sm:gap-[25px] py-[50px] justify-center items-center '>
+    <div className='flex flex-col  gap-[20px] sm:gap-[25px] pb-[50px] justify-center items-center '>
       
-      <div className='flex sm:flex-row flex-col gap-[20px]'>
-        <input className='sm:w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
-        <input className='sm:w-[50px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
-        <input className='sm:w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Location'  value={location} onChange={(e) => setLocation(e.target.value)}></input>
+      <div className='flex sm:flex-row gap-[20px]'>
+        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Item Name' value={name} onChange={(e) => setName(e.target.value)}></input>
+        <input className='w-[50px]  h-[50px] rounded-lg pl-[2px]' placeholder='Quantity' type='number' value={quan} onChange={(e) => setQuan(e.target.value)}></input>
+        <input className='w-[300px]  h-[50px] rounded-lg pl-[2px]' placeholder='Location'  value={location} onChange={(e) => setLocation(e.target.value)}></input>
 
       </div>
 
@@ -214,25 +214,25 @@ var updatedPartsList = partsList
       
     </div>
       
-      <div className='flex flex-col gap-[100px]  pb-[200px] pl-[10px]'>
+      <div className='flex flex-col gap-[100px] pl-[10px] pb-[200px]'>
         {partsList.map(part => 
         <div className="flex flex-col gap-[15px]" key={part.id}>
         
           <div className='flex flex-row gap-[2px] font-semibold'>
             Name: {part.name}
-            {/* <button className='w-[75px] h-[30px] flex items-center justify-center text-red-700 hover:text-black hover:bg-red-700  hover:border-black ' onClick={() => removeItem(part.name)}>Remove</button> */}
+            <button className='w-[75px] h-[30px] flex items-center justify-center text-red-700 hover:text-black hover:bg-red-700  hover:border-black ' onClick={() => removeItem(part.name)}>Remove</button>
           </div>
 
-          <div className='flex sm:flex-row flex-col gap-[10px]'>
+          <div className='flex flex-row gap-[10px]'>
             # of {part.name}: {part.quan}
             <input id={part.id} className='w-[100px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new #'  onChange={(e) => setNewQuan(e.target.value)}></input>
             <button className='w-[100px] h-[30px] flex items-center justify-center text-green-500  hover:text-black hover:bg-green-500  hover:border-black ' onClick={() => changeQuan(part.id)}>Enter</button>
           </div>
 
-          <div className='flex sm:flex-row flex-col gap-[10px]'>
+          <div className='flex flex-row gap-[10px]'>
             Location : {part.location}
-            <input id="newLoc" className='sm:w-[300px] w-[200px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new location'  onChange={(e) => setNewLoc(e.target.value)}></input>
-            <button className='w-[100px]  h-[30px] flex items-center justify-center text-green-500 hover:text-black hover:bg-green-500  hover:border-black ' onClick={() => changeLoc(part.id)}>Enter</button>
+            <input id="newLoc" className='w-[300px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new location'  onChange={(e) => setNewLoc(e.target.value)}></input>
+            <button className='w-[100px] h-[30px] flex items-center justify-center text-green-500 hover:text-black hover:bg-green-500  hover:border-black ' onClick={() => changeLoc(part.id)}>Enter</button>
           </div>
           
         </div>)}
@@ -243,4 +243,4 @@ var updatedPartsList = partsList
   )
 }
 
-export default Page1
+export default Old_closet

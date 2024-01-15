@@ -6,7 +6,7 @@ import { uuidv4 } from '@firebase/util';
 
 
 
-const Page1 = () => {
+const Storage_closet = () => {
 
 const [name, setName] = useState("")
 const [quan, setQuan] = useState(0)
@@ -17,7 +17,7 @@ const [location, setLocation] = useState("")
 const [newLoc, setNewLoc] = useState("")
 
 
-const storedData = window.localStorage.getItem('rahulData');
+const storedData = window.localStorage.getItem('storageClosetData');
 const parsedDataBeta = storedData ? JSON.parse(storedData) : {};
 const initPartsList = parsedDataBeta.partsList || [];
 const [partsList, setPartsList] = useState(initPartsList)
@@ -25,7 +25,7 @@ const [partsList, setPartsList] = useState(initPartsList)
 // Load data from local storage when the component mounts
 useEffect(() => {
     
-  const storedData = window.localStorage.getItem('rahulData');
+  const storedData = window.localStorage.getItem('storageClosetData');
   
   if (storedData) {
     const parsedDataBeta = JSON.parse(storedData);
@@ -46,7 +46,7 @@ useEffect(() => {
   };
 
 
-  window.localStorage.setItem('rahulData', JSON.stringify(dataToStore));
+  window.localStorage.setItem('storageClosetData', JSON.stringify(dataToStore));
 }, [partsList, newQuan, newLoc /* ... other state variables ... */]);
 
 
@@ -56,7 +56,7 @@ useEffect(() => {
 
 async function removeItem(partName) {
   // console.log(partName)
-  const q = query(collection(db, "rahul-closet"), where("name", "==", partName));
+  const q = query(collection(db, "storage-room"), where("name", "==", partName));
   const querySnapshot = await getDocs(q);
   var docId;
   querySnapshot.forEach((doc) => {
@@ -65,7 +65,7 @@ async function removeItem(partName) {
     
   });
 
-  await deleteDoc(doc(db, "rahul-closet", docId));
+  await deleteDoc(doc(db, "storage-room", docId));
 
   // for (var i = 0; i < partsList.length; i++) {
   //   console.log("updatedPartsList")
@@ -85,7 +85,7 @@ async function removeItem(partName) {
   txtBox.value = "";
 
   console.log("Id:", id);
-  await updateDoc(doc(db, 'rahul-closet', id), {
+  await updateDoc(doc(db, 'storage-room', id), {
     quan: newQuan.toString(),
   })
 
@@ -108,7 +108,7 @@ async function removeItem(partName) {
   txtBox.value = "";
 
   console.log("Id:", id);
-  await updateDoc(doc(db, 'rahul-closet', id), {
+  await updateDoc(doc(db, 'storage-room', id), {
     location: newLoc.toString(),
   })
 
@@ -128,7 +128,7 @@ async function removeItem(partName) {
 
 function nameSubmit() {
   let id;
-  addDoc(collection(db, "rahul-closet"), {
+  addDoc(collection(db, "storage-room"), {
     name: name,
     quan: quan,
     location: location
@@ -157,7 +157,7 @@ var updatedPartsList = partsList
 
   async function refresh() {
 
-    const qDcaf = query(collection(db, "rahul-closet"))
+    const qDcaf = query(collection(db, "storage-room"))
 
     onSnapshot(qDcaf, {includeMetadataChanges:true}, (snapshot) =>
       snapshot.docChanges().forEach((change) => {
@@ -196,7 +196,7 @@ var updatedPartsList = partsList
 }
   
   return (
-  <div className='container  w-screen font-Poppins '>
+    <div className='container  w-screen font-Poppins '>
 
     <div className='flex flex-col  gap-[20px] sm:gap-[25px] py-[50px] justify-center items-center '>
       
@@ -243,4 +243,4 @@ var updatedPartsList = partsList
   )
 }
 
-export default Page1
+export default Storage_closet
