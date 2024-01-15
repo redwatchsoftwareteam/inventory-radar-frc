@@ -102,20 +102,28 @@ async function removeItem(partName) {
   setNewQuan(0)
  }
 
-//  async function changeLoc(id) {
-//   // console.log(newLoc)
-//   await updateDoc(doc(db, 'dcaf', id), {
-//     location: newLoc.toString(),
-//   })
+ async function changeLoc(id) {
+  let txtBox = document.getElementById(id);
+  console.log(txtBox.value)
+  txtBox.value = "";
 
-//   for (var i = 0; i < partsList.length; i++) {
-//     if (partsList[i].id == id){
-//       partsList[i].location = newLoc
-//     }
-//   }
+  console.log("Id:", id);
+  await updateDoc(doc(db, 'dcaf', id), {
+    location: newLoc.toString(),
+  })
 
-//   setNewLoc("")
-//  }
+  for (var i = 0; i < partsList.length; i++) {
+    console.log("Checking part:", partsList[i]);
+
+    if (partsList[i].id == id){
+      partsList[i].location = newLoc
+    }
+  }
+
+  console.log("Updated partsList:", partsList);
+
+  setNewLoc("")
+ }
 
 
 function nameSubmit() {
@@ -218,13 +226,13 @@ var updatedPartsList = partsList
           <div className='flex flex-row gap-[10px]'>
             # of {part.name}: {part.quan}
             <input id={part.id} className='w-[100px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new #'  onChange={(e) => setNewQuan(e.target.value)}></input>
-            <button className='w-[175px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeQuan(part.id)}>Enter</button>
+            <button className='w-[100px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeQuan(part.id)}>Enter</button>
           </div>
 
           <div className='flex flex-row gap-[10px]'>
             Location : {part.location}
             <input id="newLoc" className='w-[300px] h-[30px] rounded-lg pl-[5px]' placeholder='Enter new location'  onChange={(e) => setNewLoc(e.target.value)}></input>
-            <button className='w-[175px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeLoc(part.id)}>Enter1</button>
+            <button className='w-[100px] h-[30px] flex items-center justify-center text-green-500' onClick={() => changeLoc(part.id)}>Enter</button>
           </div>
           
         </div>)}
