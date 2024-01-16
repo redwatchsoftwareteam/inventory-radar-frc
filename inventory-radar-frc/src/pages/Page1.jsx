@@ -135,7 +135,7 @@ async function removeItem(partName) {
 
     console.log("Document written with ID: ", docRef.id);
     let id = docRef.id;
-    
+    //
     sepFunc(id)
 
 })
